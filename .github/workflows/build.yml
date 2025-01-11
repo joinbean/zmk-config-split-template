@@ -1,7 +1,5 @@
 on: [push, pull_request, workflow_dispatch]
-
 name: Build
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,9 +8,9 @@ jobs:
     name: Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Cache west modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-zephyr-modules
         with:
@@ -33,29 +31,28 @@ jobs:
         run: west update
       - name: West Zephyr export
         run: west zephyr-export
-      - name: West Build (KEYBOARD_TITLE Left)
-        run: west build -s zmk/app -b BOARD_NAME -- -DSHIELD=SHIELD_NAME_left -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
-      - name: KEYBOARD_TITLE DTS File
+      - name: West Build (Charybdis Left)
+        run: west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=charybdis_left -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+      - name: Charybdis DTS File
         if: ${{ always() }}
-        run: cat -n build/zephyr/BOARD_NAME.dts.pre.tmp
-      - name: KEYBOARD_TITLE Left Kconfig file
+        run: cat -n build/zephyr/nice_nano_v2.dts.pre.tmp
+      - name: Charybdis Left Kconfig file
         run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
       - name: Rename zmk.uf2
-        run: cp build/zephyr/zmk.uf2 SHIELD_NAME_left_BOARD_NAME.uf2
-      - name: Archive (KEYBOARD_TITLE Left)
-        uses: actions/upload-artifact@v2
+        run: cp build/zephyr/zmk.uf2 charybdis_left_nice_nano_v2.uf2
+      - name: Archive (Charybdis Left)
+        uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: SHIELD_NAME_left_BOARD_NAME.uf2
-      - name: West Build (KEYBOARD_TITLE Right)
-        run: west build --pristine -s zmk/app -b BOARD_NAME -- -DSHIELD=SHIELD_NAME_right -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
-
-      - name: KEYBOARD_TITLE Right Kconfig file
+          path: charybdis_left_nice_nano_v2.uf2
+      - name: West Build (Charybdis Right)
+        run: west build --pristine -s zmk/app -b nice_nano_v2 -- -DSHIELD=charybdis_right -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+      - name: Charybdis Right Kconfig file
         run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
       - name: Rename zmk.uf2
-        run: cp build/zephyr/zmk.uf2 SHIELD_NAME_right_BOARD_NAME.uf2
-      - name: Archive (KEYBOARD_TITLE Right)
-        uses: actions/upload-artifact@v2
+        run: cp build/zephyr/zmk.uf2 charybdis_right_nice_nano_v2.uf2
+      - name: Archive (Charybdis Right)
+        uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: SHIELD_NAME_right_BOARD_NAME.uf2
+          path: charybdis_right_nice_nano_v2.uf2
