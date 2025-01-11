@@ -1,4 +1,4 @@
-#include "charybdis.dtsi"
+#include "charybdis_4x6.dtsi"
 
 &pro_micro_spi {
     status = "okay";
